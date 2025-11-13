@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -10,10 +8,7 @@ public class Player : MonoBehaviour
     private InputController _inputController;
     private MoveController _moveController;
 
-    public Vector3 _inputAxis;
-
-    public float Speed => _speed;
-    public float RotationSpeed => _rotationSpeed;
+    private Vector3 _inputAxis;
 
 
     private void Awake()

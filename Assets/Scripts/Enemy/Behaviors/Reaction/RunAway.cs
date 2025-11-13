@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 
 public class RunAway : MonoBehaviour, IBehaviorReaction
@@ -43,7 +40,7 @@ public class RunAway : MonoBehaviour, IBehaviorReaction
     private bool IsAchieveEscapePoint()
     {
         float distanceToEscapePoint = Vector3.Distance(transform.position, escapePoint);
-        return distanceToEscapePoint <= _owner.MinDistance;
+        return distanceToEscapePoint <= _owner.MinDistanceToTarget;
     }
 
     private void UpdateActiveCondition()

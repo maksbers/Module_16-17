@@ -234,7 +234,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0aa64b7b661e6240aff390ae3e202e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputAxis: {x: 0, y: 0, z: 0}
 --- !u!114 &91597291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,7 +471,7 @@ PrefabInstance:
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
       propertyPath: _behaviorReactionMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
@@ -1116,7 +1115,7 @@ PrefabInstance:
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
       propertyPath: _behaviorReactionMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
@@ -1340,7 +1339,7 @@ PrefabInstance:
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
       propertyPath: _behaviorReactionMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}

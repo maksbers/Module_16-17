@@ -1,12 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PatrolIdle : MonoBehaviour, IBehaviorIdle
 {
     private Enemy _owner;
-    public List<Transform> _targetPoints;
+    private List<Transform> _targetPoints;
 
     private MoveController _moveController;
 
@@ -48,7 +46,7 @@ public class PatrolIdle : MonoBehaviour, IBehaviorIdle
     {
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-        if (distanceToTarget < _owner.MinDistance)
+        if (distanceToTarget < _owner.MinDistanceToTarget)
         {
             _currentIndex++;
 

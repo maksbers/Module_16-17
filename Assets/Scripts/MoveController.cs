@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public class MoveController : MonoBehaviour
 {
     private float _deadZone = 0.1f;
@@ -13,26 +12,30 @@ public class MoveController : MonoBehaviour
         _rigidBody = GetComponent<Rigidbody>();
     }
 
+    private Vector3 GetDirectionTo(Vector3 target) => target - transform.position;
+
     public void MoveToPoint(Vector3 point, float speed)
     {
-        Vector3 direction = point - _rigidBody.position;
+        Vector3 direction = GetDirectionTo(point);
         MoveToward(direction, speed);
     }
 
     public void MoveToward(Vector3 direction, float speed)
     {
         direction.y = 0f;
-        direction.Normalize();
+        Vector3 normaliseDirection = direction.normalized;
 
-        Vector3 moveVector = direction * speed * Time.fixedDeltaTime;
-        Vector3 targetPosition = _rigidBody.position + moveVector;
+        float step = speed * Time.fixedDeltaTime;
+
+        Vector3 moveVector = normaliseDirection * step;
+        Vector3 targetPosition = transform.position + moveVector;
 
         _rigidBody.MovePosition(targetPosition);
     }
 
     public void RotateToPoint(Vector3 point, float speed)
     {
-        Vector3 direction = point - _rigidBody.position;
+        Vector3 direction = GetDirectionTo(point);
         RotateToward(direction, speed);
     }
 
@@ -42,10 +45,11 @@ public class MoveController : MonoBehaviour
             return;
 
         direction.y = 0f;
-        direction.Normalize();
+        Vector3 normaliseDirection = direction.normalized;
 
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-        Quaternion newRotation = Quaternion.RotateTowards(_rigidBody.rotation, targetRotation, speed * Time.fixedDeltaTime);
+        Quaternion targetRotation = Quaternion.LookRotation(normaliseDirection);
+        float step = speed * Time.fixedDeltaTime;
+        Quaternion newRotation = Quaternion.RotateTowards(_rigidBody.rotation, targetRotation, step);
 
         _rigidBody.MoveRotation(newRotation);
     }
