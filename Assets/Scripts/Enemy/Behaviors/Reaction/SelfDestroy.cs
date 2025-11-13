@@ -4,36 +4,39 @@ using UnityEngine;
 
 public class SelfDestroy : MonoBehaviour, IBehaviorReaction
 {
-    private Enemy _enemy;
-
-    private bool _isActivated;
+    private Enemy _owner;
 
     private float _shrinkSpeed = 3f;
-    private float _minScale = 0.01f;
 
-    public void Init(Enemy enemy)
+    private bool _isActivated;
+    private float _currentScale;
+
+    public void Init(Enemy owner)
     {
-        _enemy = enemy;
+        _owner = owner;
     }
 
     public void RunReaction()
     {
-        if (_enemy == null)
-            return;
+        _currentScale = transform.localScale.x;
+        _isActivated = true;
+    }
 
-        if (_enemy.IsPlayerDetected)
-            _isActivated = true;
-
+    private void Update()
+    {
         if (_isActivated == false)
             return;
 
-        float shrink = _shrinkSpeed * Time.deltaTime;
+        RunSelfDestroy();
+    }
 
-        transform.localScale -= new Vector3(shrink, shrink, shrink);
-
-        if (transform.localScale.x <= _minScale)
-        {
+    private void RunSelfDestroy()
+    {
+        if (_currentScale <= 0)
             Destroy(gameObject);
-        }
+
+        _currentScale -= _shrinkSpeed * Time.deltaTime;
+
+        transform.localScale = new Vector3(_currentScale, _currentScale, _currentScale);
     }
 }

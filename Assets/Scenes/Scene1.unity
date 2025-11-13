@@ -153,8 +153,8 @@ Rigidbody:
   m_GameObject: {fileID: 91597284}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 1
+  m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -192,7 +192,7 @@ Transform:
   m_GameObject: {fileID: 91597284}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.5, y: 0, z: 0}
+  m_LocalPosition: {x: -2.4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -234,6 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0aa64b7b661e6240aff390ae3e202e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inputAxis: {x: 0, y: 0, z: 0}
 --- !u!114 &91597291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,12 +467,12 @@ PrefabInstance:
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
       propertyPath: _behaviorIdleMode
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
       propertyPath: _behaviorReactionMode
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
@@ -1120,7 +1121,7 @@ PrefabInstance:
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
       propertyPath: _targetPoints.Array.size
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
@@ -1333,9 +1334,34 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
         type: 3}
-      propertyPath: _behaviorReactionMode
-      value: 0
+      propertyPath: _behaviorIdleMode
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
+        type: 3}
+      propertyPath: _behaviorReactionMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
+        type: 3}
+      propertyPath: _targetPoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
+        type: 3}
+      propertyPath: _targetPoints.Array.data[0]
+      value: 
+      objectReference: {fileID: 1522683946}
+    - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
+        type: 3}
+      propertyPath: _targetPoints.Array.data[1]
+      value: 
+      objectReference: {fileID: 623494786}
+    - target: {fileID: 9183300972304114816, guid: ad260947dd996a248ba284f041538717,
+        type: 3}
+      propertyPath: _targetPoints.Array.data[2]
+      value: 
+      objectReference: {fileID: 552495082}
     m_RemovedComponents:
     - {fileID: 3786981020787460709, guid: ad260947dd996a248ba284f041538717, type: 3}
     - {fileID: 8510637118667500014, guid: ad260947dd996a248ba284f041538717, type: 3}

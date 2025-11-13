@@ -1,57 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+
 
 public class MoveController : MonoBehaviour
 {
     private float _deadZone = 0.1f;
 
-    private InputController _inputController;
-    private Player _player;
     private Rigidbody _rigidBody;
-
-    private Vector3 _inputAxis;
 
 
     private void Awake()
     {
-        _player = GetComponent<Player>();
         _rigidBody = GetComponent<Rigidbody>();
-        _inputController = GetComponent<InputController>();
     }
 
-    private void Update()
+    public void MoveToPoint(Vector3 point, float speed)
     {
-        if (_inputController == null)
-            return;
-
-        _inputAxis = _inputController.ReadInput();
+        Vector3 direction = point - _rigidBody.position;
+        MoveToward(direction, speed);
     }
 
-    private void FixedUpdate()
+    public void MoveToward(Vector3 direction, float speed)
     {
-        if (_inputAxis.magnitude < _deadZone)
-            return;
+        direction.y = 0f;
+        direction.Normalize();
 
-        MoveTo(_inputAxis);
-        RotateTo(_inputAxis);
-    }
-
-    private void MoveTo(Vector3 direction)
-    {
-        Vector3 moveVector = direction.normalized * _player.Speed * Time.deltaTime;
-
+        Vector3 moveVector = direction * speed * Time.fixedDeltaTime;
         Vector3 targetPosition = _rigidBody.position + moveVector;
 
         _rigidBody.MovePosition(targetPosition);
     }
 
-    private void RotateTo(Vector3 direction)
+    public void RotateToPoint(Vector3 point, float speed)
     {
-        Quaternion targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        Vector3 direction = point - _rigidBody.position;
+        RotateToward(direction, speed);
+    }
 
-        Quaternion newRotation = Quaternion.Slerp(_rigidBody.rotation, targetRotation, _player.RotationSpeed * Time.deltaTime);
+    public void RotateToward(Vector3 direction, float speed)
+    {
+        if (direction.magnitude < _deadZone)
+            return;
+
+        direction.y = 0f;
+        direction.Normalize();
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        Quaternion newRotation = Quaternion.RotateTowards(_rigidBody.rotation, targetRotation, speed * Time.fixedDeltaTime);
 
         _rigidBody.MoveRotation(newRotation);
     }

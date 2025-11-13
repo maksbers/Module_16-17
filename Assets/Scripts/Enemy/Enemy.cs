@@ -1,26 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    private float _speed = 5.0f;
+    private float _speed = 6f;
+    private float _speedRotation = 500f;
+
     private float _minDistance = 0.1f;
-    private float _limitPosition = 20f;
+    private float _limitPosition = 15f;
+    private float _gizmoLength;
 
     private IBehaviorIdle _behaviorIdle;
     private IBehaviorReaction _behaviorReaction;
 
-    private Transform _player;
-    private bool _isPlayerDetected = false;
+    private MoveController _moveController;
+    private Transform _target;
+    private bool _isTargetDetected = false;
 
     public float Speed => _speed;
+    public float SpeedRotation => _speedRotation;
     public float MinDistance => _minDistance;
     public float LimitPosition => _limitPosition;
-    public Transform Player => _player;
-    public bool IsPlayerDetected => _isPlayerDetected;
+    public float GizmoLength => _gizmoLength;
+    public Transform Target => _target;
+    public MoveController MoveController => _moveController;
+    public bool IsTargetDetected => _isTargetDetected;
 
-
+    public float DistanceToPlayer;
 
     public void Init(IBehaviorIdle behaviorIdle, IBehaviorReaction behaviorReaction)
     {
@@ -28,25 +36,35 @@ public class Enemy : MonoBehaviour
         _behaviorReaction = behaviorReaction;
     }
 
-    private void Update()
+    private void Awake()
+    {
+        _moveController = GetComponent<MoveController>();
+    }
+
+    private void FixedUpdate()
     {
         UpdateBehavior();
     }
 
     private void UpdateBehavior()
     {
-        _behaviorReaction.RunReaction();
-
-        if (IsPlayerDetected == false)
+        if (_isTargetDetected == true)
+            _behaviorReaction.RunReaction();
+        else
             _behaviorIdle.RunIdle();
+    }
+
+    public void ResetDetection()
+    {
+        _isTargetDetected = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<Player>(out Player player))
         {
-            _isPlayerDetected = true;
-            _player = player.transform;
+            _target = player.transform;
+            _isTargetDetected = true;
         }
     }
 
@@ -54,27 +72,7 @@ public class Enemy : MonoBehaviour
     {
         if (other.TryGetComponent<Player>(out Player player))
         {
-            _isPlayerDetected = false;
-            _player = null;
+            _target = null;
         }
-    }
-
-    public void MoveTo(Transform target)
-    {
-        transform.position = Vector3.MoveTowards(transform.position, target.position, _speed * Time.deltaTime);
-    }
-
-    public void MoveTo(Vector3 direction)
-    {
-        transform.position += direction * _speed * Time.deltaTime;
-    }
-
-    public void RotateTo(Vector3 targetPosition, float rotationSpeed)
-    {
-        Vector3 direction = targetPosition - transform.position;
-        direction.y = 0f;
-
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
 }

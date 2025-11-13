@@ -8,21 +8,22 @@ public class PatrolIdle : MonoBehaviour, IBehaviorIdle
     private Enemy _owner;
     public List<Transform> _targetPoints;
 
+    private MoveController _moveController;
+
     private int _currentIndex;
-    private bool _isInitialized;
 
 
     public void Init(Enemy owner)
     {
         _owner = owner;
+        _moveController = GetComponent<MoveController>();
 
         _currentIndex = 0;
-        _isInitialized = true;
     }
 
     public void RunIdle()
     {
-        if (!_isInitialized || _targetPoints == null || _targetPoints.Count == 0)
+        if (_targetPoints == null || _targetPoints.Count == 0)
             return;
 
         ProcessPatrol();
@@ -32,8 +33,8 @@ public class PatrolIdle : MonoBehaviour, IBehaviorIdle
     {
         Transform target = _targetPoints[_currentIndex];
 
-        _owner.MoveTo(target);
-        _owner.RotateTo(target.position, _owner.Speed);
+        _moveController.MoveToPoint(target.position, _owner.Speed);
+        _moveController.RotateToPoint(target.position, _owner.SpeedRotation);
 
         UpdateTargetIndex(target);
     }

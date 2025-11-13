@@ -6,16 +6,23 @@ using UnityEngine.UIElements;
 
 public class WalkIdle : MonoBehaviour, IBehaviorIdle
 {
-    private float _cooldownDirection = 1f;
+    private float _cooldownChangeDirection = 1f;
+
+    private MoveController _moveController;
+    private Enemy _owner;
 
     private Vector3 _targetDirection;
+
     private float _timer;
 
-    private Enemy _owner;
 
     public void Init(Enemy owner)
     {
         _owner = owner;
+        _moveController = GetComponent<MoveController>();
+
+        _targetDirection = GenerateDirection();
+        _timer = 0f;
     }
 
     public void RunIdle()
@@ -23,32 +30,41 @@ public class WalkIdle : MonoBehaviour, IBehaviorIdle
         ProcessMovement();
     }
 
+    private void OnDrawGizmos()
+    {
+        Debug.DrawRay(transform.position, _targetDirection * _owner.GizmoLength, Color.yellow);
+        Debug.DrawRay(transform.position, transform.forward * _owner.GizmoLength, Color.red);
+    }
+
     private void ProcessMovement()
     {
-        _timer += Time.deltaTime;
+        _timer += Time.fixedDeltaTime;
 
-        if (_timer > _cooldownDirection || _targetDirection == Vector3.zero)
+        if (_timer > _cooldownChangeDirection)
         {
             _timer = 0;
             _targetDirection = GenerateDirection();
         }
 
-        _owner.MoveTo(_targetDirection);
-
-        Vector3 lookPoint = _owner.transform.position + _targetDirection;
-        _owner.RotateTo(lookPoint, _owner.Speed);
-
         ProcessLimits();
+
+        _moveController.MoveToward(_targetDirection, _owner.Speed);
+        _moveController.RotateToward(_targetDirection, _owner.SpeedRotation);
     }
 
     private void ProcessLimits()
     {
-        Vector3 position = transform.position;
+        bool isOutside = Mathf.Abs(transform.position.x) >= _owner.LimitPosition || Mathf.Abs(transform.position.z) >= _owner.LimitPosition;
 
-        if (Mathf.Abs(position.x) > _owner.LimitPosition || Mathf.Abs(position.z) > _owner.LimitPosition)
-        {
-            _targetDirection = -_targetDirection;
-        }
+        if (isOutside == false)
+            return;
+
+        Vector3 directionToCenter = Vector3.zero - transform.position;
+        directionToCenter.y = 0f;
+
+        _targetDirection = directionToCenter.normalized;
+
+        _timer = 0f;
     }
 
     private Vector3 GenerateDirection()
