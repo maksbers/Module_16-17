@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
@@ -7,8 +6,8 @@ public class SpawnPoint : MonoBehaviour
     [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private List<Transform> _targetPoints;
 
-    [SerializeField] private BehaviorIdleMode _behaviorIdleMode;
-    [SerializeField] private BehaviorReactionMode _behaviorReactionMode;
+    [SerializeField] private EnumBehaviorIdle _behaviorIdleMode;
+    [SerializeField] private EnumBehaviorReaction _behaviorReactionMode;
 
 
     private void Awake()
@@ -16,67 +15,42 @@ public class SpawnPoint : MonoBehaviour
         Spawn(_behaviorIdleMode, _behaviorReactionMode, transform.position);
     }
 
-    public void Spawn(BehaviorIdleMode idleMode, BehaviorReactionMode reactionMode, Vector3 position)
+    public void Spawn(EnumBehaviorIdle idleMode, EnumBehaviorReaction reactionMode, Vector3 position)
     {
         Enemy instance = Instantiate(_enemyPrefab, position, Quaternion.identity);
 
-        IBehaviorIdle idleBehavior = CreateIdleBehavior(instance, idleMode);
-        IBehaviorReaction reactionBehavior = CreateReactionBehavior(instance, reactionMode);
+        IBehavior idleBehavior = CreateIdleBehavior(instance.transform, idleMode);
+        IBehavior reactionBehavior = CreateReactionBehavior(instance.transform, reactionMode);
 
         instance.Init(idleBehavior, reactionBehavior);
     }
 
-    private IBehaviorReaction CreateReactionBehavior(Enemy instance, BehaviorReactionMode reactionMode)
+    private IBehavior CreateReactionBehavior(Transform instance, EnumBehaviorReaction reactionMode)
     {
         switch (reactionMode)
         {
-            case BehaviorReactionMode.SelfDestroy:
-                {
-                    SelfDestroy behavior = instance.AddComponent<SelfDestroy>();
-                    behavior.Init(instance);
-                    return behavior;
-                }
-            case BehaviorReactionMode.RunAway:
-                {
-                    RunAway behavior = instance.AddComponent<RunAway>();
-                    behavior.Init(instance);
-                    return behavior;
-                }
-            case BehaviorReactionMode.Chase:
-                {
-                    Chase behavior = instance.AddComponent<Chase>();
-                    behavior.Init(instance);
-                    return behavior;
-                }
+            case EnumBehaviorReaction.SelfDestroy:
+                return new SelfDestroy(instance);
+            case EnumBehaviorReaction.RunAway:
+                return new RunAway(instance);
+            case EnumBehaviorReaction.Chase:
+                return new Chase(instance);
             default:
                 Debug.LogError("Unknown BehaviorReactionMode");
                 return null;
         }
     }
 
-    private IBehaviorIdle CreateIdleBehavior(Enemy instance, BehaviorIdleMode idleMode)
+    private IBehavior CreateIdleBehavior(Transform instance, EnumBehaviorIdle idleMode)
     {
         switch (idleMode)
         {
-            case BehaviorIdleMode.Wait:
-                {
-                    WaitIdle behavior = instance.AddComponent<WaitIdle>();
-                    behavior.Init(instance);
-                    return behavior;
-                }
-            case BehaviorIdleMode.Walk:
-                {
-                    WalkIdle behavior = instance.AddComponent<WalkIdle>();
-                    behavior.Init(instance);
-                    return behavior;
-                }
-            case BehaviorIdleMode.Patrol:
-                {
-                    PatrolIdle behavior = instance.AddComponent<PatrolIdle>();
-                    behavior.Init(instance);
-                    behavior.SetTargetPoints(_targetPoints);
-                    return behavior;
-                }
+            case EnumBehaviorIdle.Wait:
+                return new WaitIdle();
+            case EnumBehaviorIdle.Walk:
+                return new WalkIdle(instance);
+            case EnumBehaviorIdle.Patrol:
+                return new PatrolIdle(instance, _targetPoints);
             default:
                 Debug.LogError("Unknown BehaviorIdleMode");
                 return null;

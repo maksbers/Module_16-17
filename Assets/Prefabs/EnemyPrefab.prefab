@@ -221,7 +221,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3519085028025233462}
   - component: {fileID: 3932079640151280454}
-  - component: {fileID: 143598158087929482}
+  - component: {fileID: 2948870686838850454}
   - component: {fileID: 616266426703962438}
   - component: {fileID: 9080286768975129605}
   m_Layer: 0
@@ -259,8 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757c9a9ef2753dd4893996b3ccdc936c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DistanceToPlayer: 0
---- !u!114 &143598158087929482
+--- !u!114 &2948870686838850454
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

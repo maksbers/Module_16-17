@@ -1,25 +1,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PatrolIdle : MonoBehaviour, IBehaviorIdle
+public class PatrolIdle : IBehavior
 {
-    private Enemy _owner;
-    private List<Transform> _targetPoints;
+    private float _speed = 6f;
+    private float _speedRotation = 500f;
+    private float _minDistanceToTarget = 0.1f;
 
+    private Transform _source;
+    private List<Transform> _targetPoints;
     private MoveController _moveController;
 
     private int _currentIndex;
 
 
-    public void Init(Enemy owner)
+    public PatrolIdle(Transform source, List<Transform> targetPoints)
     {
-        _owner = owner;
-        _moveController = GetComponent<MoveController>();
+        _source = source;
+        _targetPoints = targetPoints;
+
+        _moveController = _source.GetComponent<MoveController>();
+    }
+
+    public void Enter()
+    {
+        if (_targetPoints == null || _targetPoints.Count == 0)
+            return;
 
         _currentIndex = 0;
     }
 
-    public void RunIdle()
+    public void Update()
     {
         if (_targetPoints == null || _targetPoints.Count == 0)
             return;
@@ -27,26 +38,26 @@ public class PatrolIdle : MonoBehaviour, IBehaviorIdle
         ProcessPatrol();
     }
 
+    public void Exit()
+    {
+
+    }
+
     private void ProcessPatrol()
     {
         Transform target = _targetPoints[_currentIndex];
 
-        _moveController.MoveToPoint(target.position, _owner.Speed);
-        _moveController.RotateToPoint(target.position, _owner.SpeedRotation);
+        _moveController.MoveToPoint(target.position, _speed);
+        _moveController.RotateToPoint(target.position, _speedRotation);
 
         UpdateTargetIndex(target);
     }
 
-    public void SetTargetPoints(List<Transform> targetPoints)
-    {
-        _targetPoints = targetPoints;
-    }
-
     private void UpdateTargetIndex(Transform target)
     {
-        float distanceToTarget = Vector3.Distance(transform.position, target.position);
+        float distanceToTarget = Vector3.Distance(_source.position, target.position);
 
-        if (distanceToTarget < _owner.MinDistanceToTarget)
+        if (distanceToTarget < _minDistanceToTarget)
         {
             _currentIndex++;
 

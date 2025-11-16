@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class MoveController : MonoBehaviour
 {
     private float _deadZone = 0.1f;

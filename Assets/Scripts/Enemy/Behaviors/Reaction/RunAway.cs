@@ -1,54 +1,65 @@
 using UnityEngine;
 
-public class RunAway : MonoBehaviour, IBehaviorReaction
+public class RunAway : IBehavior
 {
+    private float _speed = 6f;
+    private float _speedRotation = 500f;
     private float _escapeOffset = 6f;
+    private float _minDistanceToTarget = 0.1f;
 
-    private Enemy _owner;
+    private Transform _source;
+    private Enemy _ownerEnemy;
     private MoveController _moveController;
 
     private Vector3 escapePoint;
     private bool _isActive = false;
 
-    public void Init(Enemy owner)
+
+    public RunAway(Transform source)
     {
-        _owner = owner;
-        _moveController = GetComponent<MoveController>();
+        _source = source;
+        _moveController = source.GetComponent<MoveController>();
+        _ownerEnemy = _source.GetComponent<Enemy>();
     }
 
-    public void RunReaction()
+    public void Enter()
     {
-        if (_isActive == true)
+        if (_isActive == true || _ownerEnemy.Target == null)
             return;
 
         CalculateEscapePoint();
         _isActive = true;
     }
 
-    private void FixedUpdate()
+    public void Update()
     {
         if (_isActive == false)
             return;
 
-        _moveController.MoveToPoint(escapePoint, _owner.Speed);
-        _moveController.RotateToPoint(escapePoint, _owner.SpeedRotation);
+        _moveController.MoveToPoint(escapePoint, _speed);
+        _moveController.RotateToPoint(escapePoint, _speedRotation);
 
         if (IsAchieveEscapePoint())
             UpdateActiveCondition();
     }
 
+    public void Exit()
+    {
+        _isActive = false;
+        _ownerEnemy.ResetDetection();
+    }
+
     private bool IsAchieveEscapePoint()
     {
-        float distanceToEscapePoint = Vector3.Distance(transform.position, escapePoint);
-        return distanceToEscapePoint <= _owner.MinDistanceToTarget;
+        float distanceToEscapePoint = Vector3.Distance(_source.position, escapePoint);
+        return distanceToEscapePoint <= _minDistanceToTarget;
     }
 
     private void UpdateActiveCondition()
     {
-        if (_owner.Target == null)
+        if (_ownerEnemy.Target == null)
         {
-            _isActive = false;
-            _owner.ResetDetection();
+            Exit();
         }
         else
             CalculateEscapePoint();
@@ -56,19 +67,10 @@ public class RunAway : MonoBehaviour, IBehaviorReaction
 
     private void CalculateEscapePoint()
     {
-        Vector3 directionFromTarget = (transform.position - _owner.Target.position);
+        Vector3 directionFromTarget = (_source.position - _ownerEnemy.Target.position);
         directionFromTarget.Normalize();
 
-        escapePoint = transform.position + directionFromTarget * _escapeOffset;
+        escapePoint = _source.position + directionFromTarget * _escapeOffset;
         escapePoint.y = 0f;
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (_isActive == true)
-        {
-            Gizmos.DrawSphere(escapePoint, 0.5f);
-            Gizmos.DrawLine(transform.position, escapePoint);
-        }
     }
 }

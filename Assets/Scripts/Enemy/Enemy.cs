@@ -10,30 +10,39 @@ public class Enemy : MonoBehaviour
 
     public Transform Target => _target;
 
-    private IBehaviorIdle _behaviorIdle;
-    private IBehaviorReaction _behaviorReaction;
+    private IBehavior _behaviorIdle;
+    private IBehavior _behaviorReaction;
+    private IBehavior _currentBehavior;
 
     private Transform _target;
     private bool _isTargetDetected = false;
 
 
-    public void Init(IBehaviorIdle behaviorIdle, IBehaviorReaction behaviorReaction)
+    public void Init(IBehavior behaviorIdle, IBehavior behaviorReaction)
     {
         _behaviorIdle = behaviorIdle;
         _behaviorReaction = behaviorReaction;
+
+        _currentBehavior = _behaviorIdle;
+        _currentBehavior.Enter();
     }
 
     private void FixedUpdate()
     {
+        if (_currentBehavior == null)
+            return;
+
         UpdateBehavior();
+
+        _currentBehavior.Update();
     }
 
     private void UpdateBehavior()
     {
-        if (_isTargetDetected == true)
-            _behaviorReaction.RunReaction();
-        else
-            _behaviorIdle.RunIdle();
+        if (_isTargetDetected == true && _currentBehavior != _behaviorReaction)
+            SwitchBehaviour(_behaviorReaction);
+        else if (_isTargetDetected == false && _currentBehavior != _behaviorIdle)
+            SwitchBehaviour(_behaviorIdle);
     }
 
     public void ResetDetection()
@@ -56,5 +65,12 @@ public class Enemy : MonoBehaviour
         {
             _target = null;
         }
+    }
+
+    private void SwitchBehaviour(IBehavior behaviour)
+    {
+        _currentBehavior.Exit();
+        _currentBehavior = behaviour;
+        _currentBehavior.Enter();
     }
 }

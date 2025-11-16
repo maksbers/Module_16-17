@@ -1,26 +1,27 @@
 using UnityEngine;
 
-public class SelfDestroy : MonoBehaviour, IBehaviorReaction
+public class SelfDestroy : IBehavior
 {
-    private Enemy _owner;
-
     private float _shrinkSpeed = 3f;
 
     private bool _isActivated;
     private float _currentScale;
 
-    public void Init(Enemy owner)
+    private Transform _source;
+
+
+    public SelfDestroy(Transform source)
     {
-        _owner = owner;
+        _source = source;
     }
 
-    public void RunReaction()
+    public void Enter()
     {
-        _currentScale = transform.localScale.x;
+        _currentScale = _source.localScale.x;
         _isActivated = true;
     }
 
-    private void Update()
+    public void Update()
     {
         if (_isActivated == false)
             return;
@@ -28,13 +29,20 @@ public class SelfDestroy : MonoBehaviour, IBehaviorReaction
         RunSelfDestroy();
     }
 
+    public void Exit()
+    {
+
+    }
+
     private void RunSelfDestroy()
     {
         if (_currentScale <= 0)
-            Destroy(gameObject);
+        {
+            Object.Destroy(_source.gameObject);
+            return;
+        }    
 
         _currentScale -= _shrinkSpeed * Time.deltaTime;
-
-        transform.localScale = new Vector3(_currentScale, _currentScale, _currentScale);
+        _source.transform.localScale = new Vector3(_currentScale, _currentScale, _currentScale);
     }
 }

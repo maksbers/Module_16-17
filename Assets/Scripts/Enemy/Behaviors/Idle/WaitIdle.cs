@@ -1,15 +1,16 @@
-using UnityEngine;
-
-public class WaitIdle : MonoBehaviour, IBehaviorIdle
+public class WaitIdle : IBehavior
 {
-    private Enemy _owner;
-
-    public void Init(Enemy owner)
+    public void Enter()
     {
-        _owner = owner;
+
     }
 
-    public void RunIdle()
+    public void Exit()
+    {
+
+    }
+
+    public void Update()
     {
 
     }

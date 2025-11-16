@@ -1,52 +1,53 @@
 using UnityEngine;
 
-public class Chase : MonoBehaviour, IBehaviorReaction
+public class Chase : IBehavior
 {
-    private Enemy _owner;
+    private float _speed = 6f;
+    private float _speedRotation = 500f;
+
+    private Transform _source;
+    private Enemy _ownerEnemy;
+
     private MoveController _moveController;
 
     private bool _isActive = false;
 
-    public void Init(Enemy owner)
+    public Chase(Transform source)
     {
-        _owner = owner;
-        _moveController = GetComponent<MoveController>();
+        _source = source;
+
+        _moveController = _source.GetComponent<MoveController>();
+        _ownerEnemy = _source.GetComponent<Enemy>();
     }
 
-    public void RunReaction()
+    public void Enter()
     {
-        if (_isActive == true || _owner.Target == null)
+        if (_isActive == true || _ownerEnemy.Target == null)
             return;
 
         _isActive = true;
     }
 
-    private void FixedUpdate()
+    public void Update()
     {
         if (_isActive == false)
             return;
 
-        if (_owner.Target == null)
+        if (_ownerEnemy.Target == null)
         {
-            _isActive = false;
-            _owner.ResetDetection();
+            Exit();
             return;
         }
 
-        Vector3 targetPoint = _owner.Target.position;
+        Vector3 targetPoint = _ownerEnemy.Target.position;
 
-        _moveController.MoveToPoint(targetPoint, _owner.Speed);
-        _moveController.RotateToPoint(targetPoint, _owner.SpeedRotation);
-
-        UpdateActiveCondition();
+        _moveController.MoveToPoint(targetPoint, _speed);
+        _moveController.RotateToPoint(targetPoint, _speedRotation);
     }
 
-    private void UpdateActiveCondition()
+    public void Exit()
     {
-        if (_owner.Target == null)
-        {
-            _isActive = false;
-            _owner.ResetDetection();
-        }
+        _isActive = false;
+        _ownerEnemy.ResetDetection();
     }
 }
